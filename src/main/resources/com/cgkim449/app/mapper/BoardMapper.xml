@@ -45,5 +45,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where bno = #{bno}
 	</update>
 	
+  <select id="getListWithPaging" resultType="com.cgkim449.app.domain.BoardVO">
+	  <![CDATA[
+	  select 
+	    bno, title, content, writer, regdate, updatedate
+	  from 
+	      (
+	      select /*+INDEX_DESC(tbl_board pk_board) */
+	        rownum rn, bno, title, content, writer, regdate, updatedate 
+	      from 
+	        tbl_board
+	      where rownum <= #{pageNum} * #{amount}
+	      )
+	      where rn > (#{pageNum} - 1) * #{amount}
+	  ]]>
+  </select>
+	<!-- 현재페이지(pageNum)이 1이면 위부터 차례대로 20, 10 이다 -->
+	
+	<select id="getTotalCount" resultType="int">
+	 select count(*) from tbl_board where bno > 0
+	</select>
 	
 </mapper>

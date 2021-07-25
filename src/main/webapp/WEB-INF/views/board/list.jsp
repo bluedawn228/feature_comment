@@ -36,7 +36,22 @@ $(document).ready(function() {
 		self.location = "/board/register";
 	});
 	
+	var actionForm = $("#actionForm");
+	
+	$(".paginate_button").on("click", function(e) {
+			e.preventDefault();
+			actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+			actionForm.submit();
+		});
+	
+	$(".move").on("click", function(e) {
+		e.preventDefault();
+		actionForm.append("<input type='hidden' name='bno' value='" + $(this).attr("href") + "'>");
+		actionForm.attr("action", "/board/get");
+		actionForm.submit();
+	});
 });
+
 </script>
 
 </head>
@@ -57,13 +72,31 @@ $(document).ready(function() {
 		<c:forEach items="${list}" var="board">
 		  <tr>
 		    <td><c:out value="${board.bno}"/></td>
-		    <td><a href='/board/get?bno=<c:out value="${board.bno}"/>'><c:out value="${board.title}"/></a></td>
+		    <td><a class='move' href='<c:out value="${board.bno}"/>'><c:out value="${board.title}"/></a></td>
 		    <td><c:out value="${board.writer}"/></td>
 		    <td><fmt:formatDate pattern="yyyy-MM-dd" value="${board.regdate}"/></td>
 		    <td><fmt:formatDate pattern="yyyy-MM-dd" value="${board.updateDate}"/></td>
 		  </tr>
 		</c:forEach>
 		
+		
 	</table>
+	
+		<c:if test="${pageMaker.prev}">
+		  <a class= "paginate_button" href="${pageMaker.startPage-1}">이전</a>
+		</c:if>
+		
+		<c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
+		  <a class= "paginate_button"  href="${num}">${num} </a>
+		</c:forEach>
+		
+		<c:if test="${pageMaker.next}">
+		  <a class= "paginate_button" href="${pageMaker.endPage+1}">다음</a>
+		</c:if>
+		
+		<form id="actionForm" action="/board/list" method="get">
+		  <input type="hidden" name="pageNum" value='<c:out value="${pageMaker.cri.pageNum}"/>'>
+		  <input type="hidden" name="amount" value='<c:out value="${pageMaker.cri.amount}"/>'>
+		</form>
 </body>
 </html>

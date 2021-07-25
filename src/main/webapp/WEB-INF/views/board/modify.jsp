@@ -24,8 +24,17 @@ $(document).ready(function() {
 		if(operation === "remove") {
 			formObject.attr("action", "/board/remove");
 		} else if(operation === "list") {
-		      formObj.attr("action", "/board/list").attr("method", "get");
-		      formObj.empty();
+		      formObject.attr("action", "/board/list").attr("method", "get");
+		      var pageNumTag = $("input[name='pageNum']").clone();
+		      var amountTag = $("input[name='amount']").clone();
+		      /*필요한 부분만 잠시 복사해놓고*/
+		      
+		      formObject.empty();
+		      /*다 지운다*/
+		      
+		      formObject.append(pageNumTag);
+		      formObject.append(amountTag);
+		      /*다시 필요한 태그들만 추가해서 /board/list를 호출하는 방식*/
 		}
 		
 		formObject.submit();
@@ -36,6 +45,9 @@ $(document).ready(function() {
 <body>
 <h1>게시글 수정</h1>
 	<form role="form" action="/board/modify" method="post">
+      <input type="hidden" name="pageNum" value='<c:out value="${cri.pageNum}"/>'>
+      <input type="hidden" name="amount" value='<c:out value="${cri.amount}"/>'>
+	
 	    <label>번호</label> <input name="bno" value='<c:out value="${board.bno}"/>' readonly="readonly"><br>
 	    <label>제목</label> <input name="title" value='<c:out value="${board.title}"/>'><br>
 	    <label>내용</label> <textarea name="content"><c:out value="${board.content}"/></textarea><br>
