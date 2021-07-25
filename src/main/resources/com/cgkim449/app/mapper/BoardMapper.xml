@@ -62,4 +62,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   </select>
 	<!-- 현재페이지(pageNum)이 1이면 위부터 차례대로 20, 10 이다 -->
 	
+	<select id="getTotalCount" resultType="int">
+	 select count(*) from tbl_board where bno > 0
+	</select>
+	
 </mapper>
