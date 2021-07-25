@@ -27,4 +27,6 @@
   
   <mybatis-spring:scan base-package="com.cgkim449.app.mapper"/>
   
+  <context:component-scan base-package="com.cgkim449.app.service"></context:component-scan>
+  
 </beans>
