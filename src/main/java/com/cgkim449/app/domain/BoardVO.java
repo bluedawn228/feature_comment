@@ -1,6 +1,6 @@
 package com.cgkim449.app.domain;
 
-import java.sql.Date;
+import java.util.Date;
 import lombok.Data;
 
 @Data
