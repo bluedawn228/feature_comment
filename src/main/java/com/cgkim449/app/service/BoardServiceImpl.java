@@ -3,6 +3,7 @@ package com.cgkim449.app.service;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import com.cgkim449.app.domain.BoardVO;
+import com.cgkim449.app.domain.Criteria;
 import com.cgkim449.app.mapper.BoardMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -35,8 +36,15 @@ public class BoardServiceImpl implements BoardService{
     return mapper.read(bno);
   }
 
+  //  @Override
+  //  public List<BoardVO> getList() {
+  //    return mapper.getList();
+  //  }
+
+
   @Override
-  public List<BoardVO> getList() {
-    return mapper.getList();
+  public List<BoardVO> getList(Criteria cri) {
+    log.info("get List with criteria: " + cri);
+    return mapper.getListWithPaging(cri);
   }
 }
