@@ -36,6 +36,13 @@ $(document).ready(function() {
 		self.location = "/board/register";
 	});
 	
+	var actionForm = $("#actionForm");
+	
+$(".paginate_button").on("click", function(e) {
+		e.preventDefault();
+		actionForm.find("input[name='pageNum']").val($(this).attr("href"));
+		actionForm.submit();
+	});
 });
 </script>
 
@@ -64,6 +71,24 @@ $(document).ready(function() {
 		  </tr>
 		</c:forEach>
 		
+		
 	</table>
+	
+		<c:if test="${pageMaker.prev}">
+		  <a class= "paginate_button" href="${pageMaker.startPage-1}">이전</a>
+		</c:if>
+		
+		<c:forEach var="num" begin="${pageMaker.startPage}" end="${pageMaker.endPage}">
+		  <a class= "paginate_button"  href="${num}">${num} </a>
+		</c:forEach>
+		
+		<c:if test="${pageMaker.next}">
+		  <a class= "paginate_button" href="${pageMaker.endPage+1}">다음</a>
+		</c:if>
+		
+		<form id="actionForm" action="/board/list" method="get">
+		  <input type="hidden" name="pageNum" value='<c:out value="${pageMaker.cri.pageNum}"/>'>
+		  <input type="hidden" name="amount" value='<c:out value="${pageMaker.cri.amount}"/>'>
+		</form>
 </body>
 </html>
