@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.cgkim449.app.domain.BoardVO;
+import com.cgkim449.app.domain.Criteria;
+import com.cgkim449.app.domain.PageDTO;
 import com.cgkim449.app.service.BoardService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j;
@@ -31,8 +33,9 @@ public class BoardController {
   private BoardService service;
 
   @GetMapping("/list")
-  public void list(Model model) {
-    model.addAttribute("list", service.getList());
+  public void list(Criteria cri, Model model) {
+    log.info("list: " + cri);
+    model.addAttribute("list", service.getList(cri));
   }
 
   @GetMapping("/register")
