@@ -27,6 +27,8 @@ $(document).ready(function() {
 		      formObject.attr("action", "/board/list").attr("method", "get");
 		      var pageNumTag = $("input[name='pageNum']").clone();
 		      var amountTag = $("input[name='amount']").clone();
+		      var keywordTag = $("input[name='keyword']").clone();
+		      var typeTag = $("input[name='type']").clone();
 		      /*필요한 부분만 잠시 복사해놓고*/
 		      
 		      formObject.empty();
@@ -34,6 +36,8 @@ $(document).ready(function() {
 		      
 		      formObject.append(pageNumTag);
 		      formObject.append(amountTag);
+		      formObject.append(keywordTag);
+		      formObject.append(typeTag);
 		      /*다시 필요한 태그들만 추가해서 /board/list를 호출하는 방식*/
 		}
 		
@@ -47,6 +51,8 @@ $(document).ready(function() {
 	<form role="form" action="/board/modify" method="post">
       <input type="hidden" name="pageNum" value='<c:out value="${cri.pageNum}"/>'>
       <input type="hidden" name="amount" value='<c:out value="${cri.amount}"/>'>
+      <input type="hidden" name="keyword" value='<c:out value="${cri.keyword}"/>'>
+      <input type="hidden" name="type" value='<c:out value="${cri.type}"/>'>
 	
 	    <label>번호</label> <input name="bno" value='<c:out value="${board.bno}"/>' readonly="readonly"><br>
 	    <label>제목</label> <input name="title" value='<c:out value="${board.title}"/>'><br>
