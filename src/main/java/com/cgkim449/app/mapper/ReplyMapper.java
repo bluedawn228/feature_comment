@@ -8,7 +8,7 @@ import com.cgkim449.app.domain.ReplyVO;
 public interface ReplyMapper {
   int insert(ReplyVO vo);
   ReplyVO read(Long rno); // 특정 댓글 읽기
-  int delete(int rno);
+  int delete(Long rno);
   int update(ReplyVO reply);
 
   public List<ReplyVO> getListWithPaging(
