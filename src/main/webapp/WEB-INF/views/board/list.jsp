@@ -12,6 +12,7 @@
 $(document).ready(function() {
 	var result='<c:out value="${result}"/>';
 	
+	/*등록,수정,삭제 성공시 alert창*/
 	alertRegisteredBoardNumber(result);
 	
 	/*현재 페이지는 alert창을 띄울 필요가 없다고 표시를 해둔다*/
@@ -32,24 +33,30 @@ $(document).ready(function() {
 		}
 	}
 	  
+	/*등록 버튼 클릭시 등록 화면으로 이동*/
 	$("#registerButton").on("click", function() {
 		self.location = "/board/register";
 	});
 	
+	
 	var actionForm = $("#actionForm");
 	
+	/*페이지 번호 클릭했을때 그 페이지로 이동*/
 	$(".paginate_button").on("click", function(e) {
 			e.preventDefault();
 			actionForm.find("input[name='pageNum']").val($(this).attr("href"));
 			actionForm.submit();
 		});
 	
+	/*조회페이지로 이동.pageNum과 amount도 함꼐 전송한다*/
 	$(".move").on("click", function(e) {
 		e.preventDefault();
 		actionForm.append("<input type='hidden' name='bno' value='" + $(this).attr("href") + "'>");
 		actionForm.attr("action", "/board/get");
 		actionForm.submit();
 	});
+	
+
 });
 
 </script>
@@ -82,6 +89,27 @@ $(document).ready(function() {
 		
 	</table>
 	
+	<!-- 검색폼 시작 -->
+	  <form id = 'searchForm' action="/board/list" method="get">
+	   <select name='type'>
+	   <!-- 검색 버튼 누르고 페이지 이동 했을때 selected 항목 표시 -->
+	     <option value="" <c:out value="${pageMaker.cri.type == null ? 'selected' :''}"/>>--</option>
+	     <option value="T" <c:out value="${pageMaker.cri.type eq 'T' ? 'selected' :''}"/>>제목
+	     <option value="C" <c:out value="${pageMaker.cri.type eq 'C' ? 'selected' :''}"/>>내용</option>
+	     <option value="W" <c:out value="${pageMaker.cri.type eq 'W' ? 'selected' :''}"/>>작성자</option>
+	     <option value="TC" <c:out value="${pageMaker.cri.type eq 'TC' ? 'selected' :''}"/>>제목 or 내용</option>
+	     <option value="TW" <c:out value="${pageMaker.cri.type eq 'TW' ? 'selected' :''}"/>>제목 or 작성자</option>
+	     <option value="TWC" <c:out value="${pageMaker.cri.type eq 'TWC' ? 'selected' :''}"/>>제목 or 내용 or 작성자</option>
+	   </select>
+	   <!-- 검색 버튼 누르고 페이지 이동 했을때 keyword표시 -->
+	   <input type='text' name='keyword' value='<c:out value="${pageMaker.cri.keyword}"/>'/>
+     <input type="hidden" name="pageNum" value='<c:out value="${pageMaker.cri.pageNum}"/>'>
+     <input type="hidden" name="amount" value='<c:out value="${pageMaker.cri.amount}"/>'>
+	   <button>검색</button>
+	  </form>
+	<!-- 검색폼 끝 -->
+	
+	<!-- 페이징 시작 -->
 		<c:if test="${pageMaker.prev}">
 		  <a class= "paginate_button" href="${pageMaker.startPage-1}">이전</a>
 		</c:if>
@@ -93,10 +121,12 @@ $(document).ready(function() {
 		<c:if test="${pageMaker.next}">
 		  <a class= "paginate_button" href="${pageMaker.endPage+1}">다음</a>
 		</c:if>
+	<!-- 페이징 끝 -->
 		
 		<form id="actionForm" action="/board/list" method="get">
 		  <input type="hidden" name="pageNum" value='<c:out value="${pageMaker.cri.pageNum}"/>'>
 		  <input type="hidden" name="amount" value='<c:out value="${pageMaker.cri.amount}"/>'>
+
 		</form>
 </body>
 </html>
