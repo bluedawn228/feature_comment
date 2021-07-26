@@ -4,6 +4,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.cgkim449.app.domain.Criteria;
+import com.cgkim449.app.domain.ReplyPageDTO;
 import com.cgkim449.app.domain.ReplyVO;
 import com.cgkim449.app.mapper.ReplyMapper;
 import lombok.AllArgsConstructor;
@@ -45,6 +46,13 @@ public class ReplyServiceImpl implements ReplyService{
   public List<ReplyVO> getList(Criteria cri, Long bno) {
     log.info("getList..." + bno);
     return mapper.getListWithPaging(cri, bno);
+  }
+
+  @Override
+  public ReplyPageDTO getListPage(Criteria cri, Long bno) {
+    return new ReplyPageDTO(
+        mapper.getCountByBno(bno),
+        mapper.getListWithPaging(cri, bno));
   }
 
 }

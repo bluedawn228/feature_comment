@@ -2,6 +2,7 @@ package com.cgkim449.app.service;
 
 import java.util.List;
 import com.cgkim449.app.domain.Criteria;
+import com.cgkim449.app.domain.ReplyPageDTO;
 import com.cgkim449.app.domain.ReplyVO;
 
 public interface ReplyService {
@@ -10,4 +11,6 @@ public interface ReplyService {
   int modify(ReplyVO vo);
   int remove(Long rno);
   List<ReplyVO> getList(Criteria cri, Long bno);
+
+  public ReplyPageDTO getListPage(Criteria cri, Long bno);
 }
