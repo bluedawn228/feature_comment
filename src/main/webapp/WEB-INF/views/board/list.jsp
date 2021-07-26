@@ -56,6 +56,28 @@ $(document).ready(function() {
 		actionForm.submit();
 	});
 	
+	 /*검색 버튼의 이벤트 처리*/
+	  var searchForm = $("#searchForm");
+	    
+	    $("#searchForm button").on("click", function(e){
+	      
+	      if(!searchForm.find("option:selected").val()) {
+	        alert("검색 종류를 선택하세요");
+	        return false;
+	      }
+	      
+	      if(!searchForm.find("input[name='keyword']").val()) {
+	        alert("키워드를 입력하세요");
+	        return false;
+	      }
+	      
+	      /*pageNum을 현재 페이지 번호에서 1로 바꾼다. 즉 검색 후 1페이지로 이동하게 한다*/
+	      searchForm.find("input[name='pageNum']").val("1");
+	      e.preventDefault();
+	      
+	      searchForm.submit();
+	    });
+	
 
 });
 
