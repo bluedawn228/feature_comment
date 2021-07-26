@@ -148,6 +148,9 @@ $(document).ready(function() {
 		<form id="actionForm" action="/board/list" method="get">
 		  <input type="hidden" name="pageNum" value='<c:out value="${pageMaker.cri.pageNum}"/>'>
 		  <input type="hidden" name="amount" value='<c:out value="${pageMaker.cri.amount}"/>'>
+		        <!-- 페이지 번호를 클릭해서 이동할때도 검색조건, 키워드는 같이 전달 -->
+      <input type="hidden" name="type" value='<c:out value="${pageMaker.cri.type}"/>'>
+      <input type="hidden" name="keyword" value='<c:out value="${pageMaker.cri.keyword}"/>'>
 
 		</form>
 </body>
