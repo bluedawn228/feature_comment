@@ -11,8 +11,11 @@ public interface ReplyMapper {
   int delete(Long rno);
   int update(ReplyVO reply);
 
+  // Criteria와, 그리고 추가적으로 해당 게시물의 번호가 필요하다
   public List<ReplyVO> getListWithPaging(
       @Param("cri") Criteria cri,
       @Param("bno") Long bno);
-  // Criteria와, 그리고 추가적으로 해당 게시물의 번호가 필요하다
+
+  // 페이징 처리를 위해서는 해당 게시물의 전체 댓글의 숫자가 있어야 한다
+  public int getCountByBno(Long bno);
 }
