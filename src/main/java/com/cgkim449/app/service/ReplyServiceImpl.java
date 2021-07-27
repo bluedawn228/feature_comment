@@ -1,14 +1,14 @@
 package com.cgkim449.app.service;
 
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.cgkim449.app.domain.Criteria;
 import com.cgkim449.app.domain.ReplyPageDTO;
 import com.cgkim449.app.domain.ReplyVO;
+import com.cgkim449.app.mapper.BoardMapper;
 import com.cgkim449.app.mapper.ReplyMapper;
 import lombok.AllArgsConstructor;
-import lombok.Setter;
 import lombok.extern.log4j.Log4j;
 
 @Service
@@ -17,10 +17,13 @@ import lombok.extern.log4j.Log4j;
 public class ReplyServiceImpl implements ReplyService{
 
   private ReplyMapper mapper;
+  private BoardMapper boardMapper;
 
+  @Transactional
   @Override
   public int register(ReplyVO vo) {
     log.info("register..." + vo);
+    boardMapper.updateReplyCnt(vo.getBno(), 1);
     return mapper.insert(vo);
   }
 
@@ -36,9 +39,13 @@ public class ReplyServiceImpl implements ReplyService{
     return mapper.update(vo);
   }
 
+  @Transactional
   @Override
   public int remove(Long rno) {
     log.info("remove..."+rno);
+    ReplyVO vo = mapper.read(rno);
+
+    boardMapper.updateReplyCnt(vo.getBno(), -1);
     return mapper.delete(rno);
   }
 
