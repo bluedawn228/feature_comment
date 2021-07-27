@@ -5,25 +5,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <mapper namespace="com.cgkim449.app.mapper.BoardMapper">
 
-<sql id="criteria">
-<trim prefix="(" suffix=") AND " prefixOverrides="OR">
- <foreach item="type" collection="typeArr">
-   <trim prefix="OR">
-     <choose>
-       <when test="type=='T'.toString()">
-         title like '%'||#{keyword}||'%'
-       </when>
-       <when test="type=='C'.toString()">
-         content like '%'||#{keyword}||'%'
-       </when>
-       <when test="type=='W'.toString()">
-         writer like '%'||#{keyword}||'%'
-       </when>
-     </choose>
-   </trim>
- </foreach>
-</trim>
-</sql>
+	<sql id="criteria">
+		<trim prefix="(" suffix=") AND " prefixOverrides="OR">
+			<foreach item="a" collection="typeArr">
+				<trim prefix="OR">
+					<choose>
+						<when test="a=='T'.toString()">
+							title like '%'||#{keyword}||'%'
+						</when>
+						<when test="a=='C'.toString()">
+							content like '%'||#{keyword}||'%'
+						</when>
+						<when test="a=='W'.toString()">
+							writer like '%'||#{keyword}||'%'
+						</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim>
+	</sql>
 
 	<select id="getList"
 		resultType="com.cgkim449.app.domain.BoardVO">
@@ -46,11 +46,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</selectKey>
 
 		insert into tbl_board (bno, title, content, writer)
-		values (#{bno}, #{title}, #{content}, #{writer})
+		values (#{bno},
+		#{title}, #{content}, #{writer})
 	</insert>
 
 	<select id="read" resultType="com.cgkim449.app.domain.BoardVO">
-		select * from tbl_board where bno=#{bno}
+		select * from tbl_board where
+		bno=#{bno}
 	</select>
 
 	<delete id="delete">
@@ -62,39 +64,45 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		content=#{content},
 		writer=#{writer},
 		updateDate=sysdate
-		where bno = #{bno}
+		where bno =
+		#{bno}
 	</update>
-	
-  <select id="getListWithPaging" resultType="com.cgkim449.app.domain.BoardVO">
+
+	<select id="getListWithPaging"
+		resultType="com.cgkim449.app.domain.BoardVO">
 	  <![CDATA[
 	  select 
-	    bno, title, content, writer, regdate, updatedate
+	    bno, title, content, writer, regdate, updatedate, replycnt
 	  from 
 	      (
 	      select /*+INDEX_DESC(tbl_board pk_board) */
-	        rownum rn, bno, title, content, writer, regdate, updatedate 
+	        rownum rn, bno, title, content, writer, regdate, updatedate, replycnt 
 	      from 
 	        tbl_board
 	      where 
 	      ]]>
-	      
-	      <include refid="criteria"></include>
+
+		<include refid="criteria"></include>
 	      
 	      <![CDATA[
 	      rownum <= #{pageNum} * #{amount}
 	      )
 	      where rn > (#{pageNum} - 1) * #{amount}
 	  ]]>
-  </select>
-	<!-- 현재페이지(pageNum)이 1이면 rn은 위부터 차례대로 20, 10 이다 -->
-	
-	
-	<select id="getTotalCount" resultType="int">
-	 select count(*) from tbl_board 
-	 where 
-	 
-	 
-	 bno > 0
 	</select>
-	
+	<!-- 현재페이지(pageNum)이 1이면 rn은 위부터 차례대로 20, 10 이다 -->
+
+
+	<select id="getTotalCount" resultType="int">
+		select count(*) from tbl_board
+		where
+
+
+		bno > 0
+	</select>
+
+  <update id="updateReplyCnt">
+    update tbl_board set replycnt = replycnt + #{amount} where bno = #{bno}
+  </update>
+
 </mapper>
