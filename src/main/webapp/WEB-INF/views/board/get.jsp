@@ -301,7 +301,9 @@ $(document).ready(function() {
 	    
     <button data-oper='list'>목록</button><br>
     
-		<button id='addReplyBtn' type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReplyModal" data-bs-whatever="@mdo">새 댓글</button>
+    <sec:authorize access="isAuthenticated()">
+		  <button id='addReplyBtn' type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReplyModal" data-bs-whatever="@mdo">새 댓글</button>
+    </sec:authorize>
     <!-- <button id='addReplyBtn'>새 댓글</button> -->
     <!-- start reply -->
     <ul class="chat">
