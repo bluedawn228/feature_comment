@@ -64,8 +64,14 @@ $(document).ready(function() {
 	    <label>등록일</label> <input name="regdate" value='<fmt:formatDate pattern="yyyy-MM-dd" value="${board.regdate}"/>' readonly="readonly"><br>
 	    <label>수정일</label> <input name="updateDate" value='<fmt:formatDate pattern="yyyy-MM-dd" value="${board.updateDate}"/>' readonly="readonly"><br>
 	    
-	    <button type="submit" data-oper="modify" >수정</button>
-	    <button type="submit" data-oper="remove">삭제</button>
+    <sec:authentication property="principal" var="pinfo"/>
+      <sec:authorize access="isAuthenticated()">
+        <c:if test="${pinfo.username eq board.writer}">
+			    <button type="submit" data-oper="modify" >수정</button>
+			    <button type="submit" data-oper="remove">삭제</button>
+        </c:if>
+      </sec:authorize>
+	    
 	    <button type="submit" data-oper="list">목록</button>
 	</form>
 </body>
