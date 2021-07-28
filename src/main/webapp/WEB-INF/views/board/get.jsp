@@ -153,15 +153,35 @@ $(document).ready(function() {
 	var modalRemoveBtn = $("#modalRemoveBtn");
 	var modalRegisterBtn = $("#modalRegisterBtn");
 	
-	$("#addReplyBtn").on("click", function(e) {
-		modal.find("input").val("");
-		modalInputReplyDate.closest("div").hide();
-		modal.find("button[id != 'modalCloseBtn']").hide();
-		
-		modalRegisterBtn.show();
-		
-		$(".modal").modal("show");
-	});
+    var replyer = null;
+    
+    /*로그인한 사용자가 댓글작성자가 된다*/
+    <sec:authorize access="isAuthenticated()">
+      replyer = '<sec:authentication property="principal.username"/>';   
+    </sec:authorize>
+ 
+    var csrfHeaderName ="${_csrf.headerName}"; 
+    var csrfTokenValue="${_csrf.token}";
+	
+    $("#addReplyBtn").on("click", function(e){
+        
+        modal.find("input").val("");
+        modal.find("input[name='replyer']").val(replyer);
+        modalInputReplyDate.closest("div").hide();
+        modal.find("button[id !='modalCloseBtn']").hide();
+        
+        modalRegisterBtn.show();
+        
+        $(".modal").modal("show");
+        
+      });
+
+    /*모든 Ajax 전송시 CSRF 토큰을 같이 전송하도록 세팅
+      매번 Ajax사용시 beforeSend를 호출해야하는 번거로움을 줄일수 있다.
+    */
+    $(document).ajaxSend(function(e, xhr, options) { 
+        xhr.setRequestHeader(csrfHeaderName, csrfTokenValue); 
+      }); 
 	
 	modalRegisterBtn.on("click", function(e) {
 		var reply = {
