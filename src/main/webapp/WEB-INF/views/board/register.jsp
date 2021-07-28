@@ -17,6 +17,8 @@
     <label>작성자</label> <input name="writer" value='<sec:authentication property="principal.username"/>' readonly="readonly"><br>
     <button type="submit">등록</button>
     <button type="reset">리셋</button>
+    
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
   </form>
 </body>
 </html>
