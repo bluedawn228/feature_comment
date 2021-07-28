@@ -1,7 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8" 
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -152,15 +153,35 @@ $(document).ready(function() {
 	var modalRemoveBtn = $("#modalRemoveBtn");
 	var modalRegisterBtn = $("#modalRegisterBtn");
 	
-	$("#addReplyBtn").on("click", function(e) {
-		modal.find("input").val("");
-		modalInputReplyDate.closest("div").hide();
-		modal.find("button[id != 'modalCloseBtn']").hide();
-		
-		modalRegisterBtn.show();
-		
-		$(".modal").modal("show");
-	});
+    var replyer = null;
+    
+    /*로그인한 사용자가 댓글작성자가 된다*/
+    <sec:authorize access="isAuthenticated()">
+      replyer = '<sec:authentication property="principal.username"/>';   
+    </sec:authorize>
+ 
+    var csrfHeaderName ="${_csrf.headerName}"; 
+    var csrfTokenValue="${_csrf.token}";
+	
+    $("#addReplyBtn").on("click", function(e){
+        
+        modal.find("input").val("");
+        modal.find("input[name='replyer']").val(replyer);
+        modalInputReplyDate.closest("div").hide();
+        modal.find("button[id !='modalCloseBtn']").hide();
+        
+        modalRegisterBtn.show();
+        
+        $(".modal").modal("show");
+        
+      });
+
+    /*모든 Ajax 전송시 CSRF 토큰을 같이 전송하도록 세팅
+      매번 Ajax사용시 beforeSend를 호출해야하는 번거로움을 줄일수 있다.
+    */
+    $(document).ajaxSend(function(e, xhr, options) { 
+        xhr.setRequestHeader(csrfHeaderName, csrfTokenValue); 
+      }); 
 	
 	modalRegisterBtn.on("click", function(e) {
 		var reply = {
@@ -200,8 +221,28 @@ $(document).ready(function() {
 	});
 	
 	modalModBtn.on("click", function(e) {
+		var originalReplyer = modalInputReplyer.val();
+		
 		/*위에서 추가한 data-rno*/
-		var reply = {rno:modal.data("rno"), reply: modalInputReply.val()};
+		var reply = {
+				rno:modal.data("rno"), 
+				reply: modalInputReply.val(),
+				replyer: originalReplyer
+				};
+		if(!replyer) {
+			alert("로그인 후 수정이 가능합니다");
+			modal.modal("hide");
+			return;
+		}
+		
+		console.log("Original Replyer: " + originalReplyer);
+		
+		if(replyer != originalReplyer) {
+			alert("자신이 작성한 댓글만 수정이 가능합니다.");
+			modal.modal("hide");
+			return;
+		}
+		
 		replyService.update(reply, function(result) {
 			alert(result);
 			modal.modal("hide");
@@ -211,7 +252,27 @@ $(document).ready(function() {
 	
 	modalRemoveBtn.on("click", function(e) {
 		var rno = modal.data("rno");
-		replyService.remove(rno, function(result) {
+		
+		console.log("RNO: " + rno);
+		console.log("REPLYER: + replyer");
+		
+		if(!replyer) {
+			alert("로그인 후 삭제가 가능합니다");
+			modal.modal("hide");
+			return;
+		}
+		
+		var originalReplyer = modalInputReplyer.val();
+		
+		console.log("Original Replyer: " + originalReplyer); // 댓글의 원래 작성자
+		
+		if(replyer != originalReplyer) {
+			alert("자신이 작성한 댓글만 삭제가 가능합니다.");
+			modal.modal("hide");
+			return;
+		}
+		
+		replyService.remove(rno, originalReplyer, function(result) {
 			alert(result);
 			modal.modal("hide");
 			showList(pageNum);
@@ -282,16 +343,34 @@ $(document).ready(function() {
 
 </head>
 <body>
+    <sec:authorize access="isAuthenticated()">
+        <a href="/customLogout">Logout</a>
+    </sec:authorize>
+    
+    <sec:authorize access="isAnonymous()">
+        <a href="/customLogin">Login</a>
+    </sec:authorize>
 <h1>게시글 조회</h1>
     <label>번호</label> <input name="bno" value='<c:out value="${board.bno}"/>' readonly="readonly"><br>
     <label>제목</label> <input name="title" value='<c:out value="${board.title}"/>' readonly="readonly"><br>
     <label>내용</label> <textarea name="content" readonly="readonly"><c:out value="${board.content}"/></textarea><br>
     <label>작성자</label> <input name="writer" value='<c:out value="${board.writer}"/>' readonly="readonly"><br>
     
-    <button data-oper='modify'>수정</button>
+    <!-- authentication 태그를 계속 쓰는게 불편하니 principal을 pinfo에 담아두자 -->
+    <sec:authentication property="principal" var="pinfo"/>
+    <!-- 로그인한 사용자만 접근 가능 -->
+	    <sec:authorize access="isAuthenticated()">
+	    <!-- 해당 게시글 작성자만 수정 버튼이 보임 -->
+		    <c:if test="${pinfo.username eq board.writer}">
+		      <button data-oper='modify'>수정</button>
+	      </c:if>
+	    </sec:authorize>
+	    
     <button data-oper='list'>목록</button><br>
     
-		<button id='addReplyBtn' type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReplyModal" data-bs-whatever="@mdo">새 댓글</button>
+    <sec:authorize access="isAuthenticated()">
+		  <button id='addReplyBtn' type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReplyModal" data-bs-whatever="@mdo">새 댓글</button>
+    </sec:authorize>
     <!-- <button id='addReplyBtn'>새 댓글</button> -->
     <!-- start reply -->
     <ul class="chat">

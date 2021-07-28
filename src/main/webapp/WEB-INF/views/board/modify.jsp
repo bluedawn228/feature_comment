@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -47,8 +48,17 @@ $(document).ready(function() {
 </script>
 </head>
 <body>
+    <sec:authorize access="isAuthenticated()">
+        <a href="/customLogout">Logout</a>
+    </sec:authorize>
+    
+    <sec:authorize access="isAnonymous()">
+        <a href="/customLogin">Login</a>
+    </sec:authorize>
 <h1>게시글 수정</h1>
 	<form role="form" action="/board/modify" method="post">
+	    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+	    
       <input type="hidden" name="pageNum" value='<c:out value="${cri.pageNum}"/>'>
       <input type="hidden" name="amount" value='<c:out value="${cri.amount}"/>'>
       <input type="hidden" name="keyword" value='<c:out value="${cri.keyword}"/>'>
@@ -61,8 +71,14 @@ $(document).ready(function() {
 	    <label>등록일</label> <input name="regdate" value='<fmt:formatDate pattern="yyyy-MM-dd" value="${board.regdate}"/>' readonly="readonly"><br>
 	    <label>수정일</label> <input name="updateDate" value='<fmt:formatDate pattern="yyyy-MM-dd" value="${board.updateDate}"/>' readonly="readonly"><br>
 	    
-	    <button type="submit" data-oper="modify" >수정</button>
-	    <button type="submit" data-oper="remove">삭제</button>
+    <sec:authentication property="principal" var="pinfo"/>
+      <sec:authorize access="isAuthenticated()">
+        <c:if test="${pinfo.username eq board.writer}">
+			    <button type="submit" data-oper="modify" >수정</button>
+			    <button type="submit" data-oper="remove">삭제</button>
+        </c:if>
+      </sec:authorize>
+	    
 	    <button type="submit" data-oper="list">목록</button>
 	</form>
 </body>

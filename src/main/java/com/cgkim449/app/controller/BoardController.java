@@ -2,6 +2,7 @@ package com.cgkim449.app.controller;
 
 import java.text.SimpleDateFormat;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
@@ -41,7 +42,9 @@ public class BoardController {
     model.addAttribute("pageMaker", new PageDTO(cri, total));
   }
 
+  // 로그인 성공한 사용자 만이 게시물 작성할 수 있도록
   @GetMapping("/register")
+  @PreAuthorize("isAuthenticated()")
   public void register() {
 
   }
@@ -53,6 +56,7 @@ public class BoardController {
 
   // 목록 화면으로 redirect할때 등록된 게시물 번호를 전달하기 위해 RedirectAttributes 이용
   @PostMapping("/register")
+  @PreAuthorize("isAuthenticated()")
   public String register(BoardVO board, RedirectAttributes rttr) {
 
     service.register(board);
@@ -62,6 +66,7 @@ public class BoardController {
   }
 
 
+  @PreAuthorize("principal.username == #board.writer")
   @PostMapping("/modify")
   public String modify(BoardVO board, @ModelAttribute("cri") Criteria cri, RedirectAttributes rttr) {
     if(service.modify(board)) {
@@ -74,8 +79,10 @@ public class BoardController {
     return "redirect:/board/list"+cri.getListLink();
   }
 
+  @PreAuthorize("principal.username == #writer")
   @PostMapping("/remove")
-  public String remove(@RequestParam("bno") Long bno, @ModelAttribute("cri") Criteria cri, RedirectAttributes rttr) {
+  public String remove(@RequestParam("bno") Long bno, @ModelAttribute("cri") Criteria cri, 
+      RedirectAttributes rttr, String writer) {
     if(service.remove(bno)) {
       rttr.addFlashAttribute("result", "success");
     }

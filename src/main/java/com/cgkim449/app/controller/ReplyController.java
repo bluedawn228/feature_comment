@@ -1,9 +1,9 @@
 package com.cgkim449.app.controller;
 
-import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,9 +26,11 @@ import lombok.extern.log4j.Log4j;
 public class ReplyController {
   private ReplyService service;
 
+  // 로그인한 사용자인지 확인
+  @PreAuthorize("isAuthenticated()")
   @PostMapping(value="/new",
-      consumes="application/json",
-      produces= {MediaType.TEXT_PLAIN_VALUE})
+  consumes="application/json",
+  produces= {MediaType.TEXT_PLAIN_VALUE})
   public ResponseEntity<String> create(@RequestBody ReplyVO vo) {
     log.info("ReplyVO: " + vo);
     int insertCount = service.register(vo);
@@ -61,8 +63,9 @@ public class ReplyController {
     return new ResponseEntity<>(service.get(rno), HttpStatus.OK);
   }
 
+  @PreAuthorize("principal.username == #vo.replyer")
   @DeleteMapping(value="/{rno}", produces= {MediaType.TEXT_PLAIN_VALUE})
-  public ResponseEntity<String> remove(@PathVariable("rno") Long rno) {
+  public ResponseEntity<String> remove(@RequestBody ReplyVO vo, @PathVariable("rno") Long rno) {
     log.info("remove: " + rno);
 
     return service.remove(rno) == 1
@@ -70,20 +73,19 @@ public class ReplyController {
             : new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
+  @PreAuthorize("principal.username == #vo.replyer")
   @RequestMapping(method= {RequestMethod.PUT, RequestMethod.PATCH},
-      value = "/{rno}",
-      consumes="application/json",
-      produces= {MediaType.TEXT_PLAIN_VALUE})
+  value = "/{rno}",
+  consumes="application/json")
   public ResponseEntity<String> modify(
       @RequestBody ReplyVO vo,
       @PathVariable("rno") Long rno) {
-    vo.setRno(rno);
     log.info("rno: " + rno);
     log.info("modify: " + vo);
 
     return service.modify(vo) == 1
-        ? new ResponseEntity<String>("success", HttpStatus.OK)
-            : new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+        ? new ResponseEntity<>("success", HttpStatus.OK)
+            : new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   @GetMapping(value="/pages/{bno}/{page}", 
