@@ -16,7 +16,7 @@
 
 	<form role="form" method='post' action="/customLogout">
 		<fieldset>
-			<a href="index.html" class="btn-success">Logout</a>
+			<a href="index.html" class="btn-success">정말 로그아웃 하시겠습니까?</a>
 		</fieldset>
 		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
 	</form>

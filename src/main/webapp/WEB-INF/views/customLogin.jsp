@@ -23,9 +23,9 @@
 				</div>
 				
 				<div class="checkbox">
-					<label> <input name="remember-me" type="checkbox">Remember Me </label>
+					<label> <input name="remember-me" type="checkbox">로그인 상태 유지</label>
 				</div>
-				<a href="index.html" class="btn-success">Login</a>
+				<a href="index.html" class="btn-success">로그인</a>
 			</fieldset>
 			
 			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
