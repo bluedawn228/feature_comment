@@ -10,6 +10,13 @@
 <title>게시글 등록</title>
 </head>
 <body>
+    <sec:authorize access="isAuthenticated()">
+        <a href="/customLogout">Logout</a>
+    </sec:authorize>
+    
+    <sec:authorize access="isAnonymous()">
+        <a href="/customLogin">Login</a>
+    </sec:authorize>
 <h1>게시글 등록</h1>
   <form role="form" action="/board/register" method="post">
     <label>제목</label> <input name="title"><br>

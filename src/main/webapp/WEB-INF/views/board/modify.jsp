@@ -48,6 +48,13 @@ $(document).ready(function() {
 </script>
 </head>
 <body>
+    <sec:authorize access="isAuthenticated()">
+        <a href="/customLogout">Logout</a>
+    </sec:authorize>
+    
+    <sec:authorize access="isAnonymous()">
+        <a href="/customLogin">Login</a>
+    </sec:authorize>
 <h1>게시글 수정</h1>
 	<form role="form" action="/board/modify" method="post">
 	    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />

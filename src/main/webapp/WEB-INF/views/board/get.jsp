@@ -343,6 +343,13 @@ $(document).ready(function() {
 
 </head>
 <body>
+    <sec:authorize access="isAuthenticated()">
+        <a href="/customLogout">Logout</a>
+    </sec:authorize>
+    
+    <sec:authorize access="isAnonymous()">
+        <a href="/customLogin">Login</a>
+    </sec:authorize>
 <h1>게시글 조회</h1>
     <label>번호</label> <input name="bno" value='<c:out value="${board.bno}"/>' readonly="readonly"><br>
     <label>제목</label> <input name="title" value='<c:out value="${board.title}"/>' readonly="readonly"><br>
