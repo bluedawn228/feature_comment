@@ -1,7 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+<%@ page language="java" contentType="text/html; charset=UTF-8" 
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -288,7 +289,16 @@ $(document).ready(function() {
     <label>내용</label> <textarea name="content" readonly="readonly"><c:out value="${board.content}"/></textarea><br>
     <label>작성자</label> <input name="writer" value='<c:out value="${board.writer}"/>' readonly="readonly"><br>
     
-    <button data-oper='modify'>수정</button>
+    <!-- authentication 태그를 계속 쓰는게 불편하니 principal을 pinfo에 담아두자 -->
+    <sec:authentication property="principal" var="pinfo"/>
+    <!-- 로그인한 사용자만 접근 가능 -->
+	    <sec:authorize access="isAuthenticated()">
+	    <!-- 해당 게시글 작성자만 수정 버튼이 보임 -->
+		    <c:if test="${pinfo.username eq board.writer}">
+		      <button data-oper='modify'>수정</button>
+	      </c:if>
+	    </sec:authorize>
+	    
     <button data-oper='list'>목록</button><br>
     
 		<button id='addReplyBtn' type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReplyModal" data-bs-whatever="@mdo">새 댓글</button>
